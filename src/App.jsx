@@ -1158,14 +1158,6 @@ function App() {
                     <Star className="w-4 h-4 flex-shrink-0" /> Reviews
                   </button>
                   <button 
-                    onClick={() => setAdminTab('bookings')}
-                    className={`flex-shrink-0 flex items-center gap-2.5 px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
-                      adminTab === 'bookings' ? 'bg-techTeal text-darkBg shadow-glowTeal/20' : 'text-slate-400 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    <Calendar className="w-4 h-4 flex-shrink-0" /> Bookings
-                  </button>
-                  <button 
                     onClick={() => setAdminTab('messages')}
                     className={`flex-shrink-0 flex items-center gap-2.5 px-3.5 py-2.5 md:px-4 md:py-3 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
                       adminTab === 'messages' ? 'bg-techTeal text-darkBg shadow-glowTeal/20' : 'text-slate-400 hover:text-white hover:bg-white/5'
@@ -1241,9 +1233,9 @@ function App() {
                       <div className="bg-darkCard border border-white/5 p-5 rounded-2xl flex items-center justify-between shadow-glowTeal/5 relative group overflow-hidden">
                         <div className="absolute top-0 left-0 w-[4px] h-full bg-cyan-400"></div>
                         <div>
-                          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">Web Projects</span>
+                          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">Web Products</span>
                           <span className="text-2xl font-extrabold text-white block mt-1">{webProjects.length}</span>
-                          <span className="text-[10px] text-slate-500 block mt-1.5">Live Portfolios</span>
+                          <span className="text-[10px] text-slate-500 block mt-1.5">Live Software Systems</span>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-cyan-400/10 flex items-center justify-center text-cyan-400 border border-cyan-400/20">
                           <Globe className="w-6 h-6" />
@@ -1253,27 +1245,15 @@ function App() {
                       <div className="bg-darkCard border border-white/5 p-5 rounded-2xl flex items-center justify-between shadow-glowTeal/5 relative group overflow-hidden">
                         <div className="absolute top-0 left-0 w-[4px] h-full bg-yellow-400"></div>
                         <div>
-                          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">Total Bookings</span>
-                          <span className="text-2xl font-extrabold text-white block mt-1">{totalBookingsCount}</span>
+                          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">Inbox Messages</span>
+                          <span className="text-2xl font-extrabold text-white block mt-1">{messages.length}</span>
                           <span className="text-[10px] text-yellow-400 font-semibold block mt-1.5 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-ping"></span>
-                            {pendingCount} Pending Ticket(s)
+                            {unreadMessagesCount} Unread Message(s)
                           </span>
                         </div>
                         <div className="w-12 h-12 rounded-xl bg-yellow-400/10 flex items-center justify-center text-yellow-400 border border-yellow-400/20">
-                          <Calendar className="w-6 h-6" />
-                        </div>
-                      </div>
-
-                      <div className="bg-darkCard border border-white/5 p-5 rounded-2xl flex items-center justify-between shadow-glowTeal/5 relative group overflow-hidden">
-                        <div className="absolute top-0 left-0 w-[4px] h-full bg-gradient-to-b from-techTeal to-neonGreen"></div>
-                        <div>
-                          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">Est. Completed Revenue</span>
-                          <span className="text-2xl font-extrabold text-neonGreen block mt-1">Rs. {estCompletedRevenue.toLocaleString()}</span>
-                          <span className="text-[10px] text-slate-500 block mt-1.5">Est. Project Total: Rs. {estProjectedRevenue.toLocaleString()}</span>
-                        </div>
-                        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 border border-white/10">
-                          <Banknote className="w-6 h-6" />
+                          <MessageSquare className="w-6 h-6" />
                         </div>
                       </div>
                     </div>
@@ -2491,6 +2471,102 @@ function App() {
                   </div>
                 )}
 
+                {/* 7. INBOX MESSAGES VIEW */}
+                {adminTab === 'messages' && (
+                  <div className="space-y-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <div>
+                        <h2 className="font-outfit font-extrabold text-2xl text-white">Manage Inbox Messages</h2>
+                        <p className="text-slate-400 text-xs sm:text-sm font-sans">View client inquiries, contact details, and respond directly via Email or WhatsApp.</p>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={fetchAdminData}
+                          className="text-xs font-semibold bg-techTeal/10 hover:bg-techTeal/20 border border-techTeal/20 text-techTeal px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                        >
+                          <Monitor className="w-3.5 h-3.5" /> Refresh Inbox
+                        </button>
+                        {messages.length > 0 && (
+                          <button 
+                            onClick={clearAllMessages}
+                            className="text-xs font-semibold bg-red-950/20 text-red-400 hover:bg-red-950/40 border border-red-500/20 px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Clear All Inbox
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="bg-darkCard border border-white/5 rounded-2xl p-5 sm:p-6 shadow-glowTeal/5 space-y-4 font-sans text-xs">
+                      <h3 className="font-outfit text-lg font-bold text-white mb-2">Received Client Messages ({messages.length})</h3>
+
+                      {messages.length === 0 ? (
+                        <div className="text-center py-16 bg-white/[0.01] rounded-xl border border-white/5">
+                          <Inbox className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                          <p className="text-slate-400 text-sm">No inbox messages received yet.</p>
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto w-full border border-white/5 rounded-xl">
+                          <table className="w-full text-left text-slate-300">
+                            <thead className="bg-white/5 text-slate-400 uppercase text-[10px] font-bold">
+                              <tr>
+                                <th className="px-4 py-3">Sender Name</th>
+                                <th className="px-4 py-3">Subject / Topic</th>
+                                <th className="px-4 py-3">Phone</th>
+                                <th className="px-4 py-3">Email</th>
+                                <th className="px-4 py-3">Date Received</th>
+                                <th className="px-4 py-3 text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                              {messages.map(m => (
+                                <tr key={m._id} className="hover:bg-white/[0.02] transition-colors">
+                                  <td className="px-4 py-3 font-bold text-white">
+                                    <div className="flex items-center gap-2">
+                                      <span className="w-2 h-2 rounded-full bg-techTeal"></span>
+                                      {m.name}
+                                    </div>
+                                  </td>
+                                  <td className="px-4 py-3 font-semibold text-slate-200 max-w-[200px] truncate" title={m.subject}>
+                                    {m.subject}
+                                  </td>
+                                  <td className="px-4 py-3 font-mono text-slate-400">
+                                    {m.phone || 'N/A'}
+                                  </td>
+                                  <td className="px-4 py-3 text-techTeal">
+                                    <a href={`mailto:${m.email}`} className="hover:underline">{m.email}</a>
+                                  </td>
+                                  <td className="px-4 py-3 text-slate-500 font-mono text-[11px]">
+                                    {m.createdAt ? new Date(m.createdAt).toLocaleDateString() : 'N/A'}
+                                  </td>
+                                  <td className="px-4 py-3 text-right">
+                                    <div className="flex items-center justify-end gap-2">
+                                      <button 
+                                        onClick={() => setSelectedMessage(m)}
+                                        className="px-2.5 py-1 rounded bg-techTeal/10 hover:bg-techTeal/20 text-techTeal border border-techTeal/30 font-semibold text-[11px] flex items-center gap-1"
+                                      >
+                                        View Detail
+                                      </button>
+                                      <button 
+                                        onClick={() => deleteMessage(m._id)}
+                                        className="p-1 rounded bg-red-950/20 hover:bg-red-950/40 text-red-400 border border-red-500/20"
+                                        title="Delete Message"
+                                      >
+                                        <Trash className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
               </div>
               
               {/* Internal Footer */}
@@ -2502,149 +2578,6 @@ function App() {
             {/* ==========================================
                 OVERLAYS: DRAWERS & MODALS
                 ========================================== */}
-            {/* Booking Detail Drawer */}
-            {selectedBooking && (
-              <div className="fixed inset-0 z-50 flex justify-end font-sans">
-                {/* Backdrop */}
-                <div 
-                  className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-                  onClick={() => setSelectedBooking(null)}
-                ></div>
-                
-                {/* Drawer Panel */}
-                <div className="relative w-full max-w-lg bg-[#080d1a] border-l border-white/10 h-full p-6 shadow-glowTeal/10 flex flex-col justify-between overflow-y-auto animate-fade-in z-10 text-xs">
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-techTeal via-neonGreen to-techTeal"></div>
-                  
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="flex justify-between items-center pb-4 border-b border-white/5">
-                      <div>
-                        <span className="text-[10px] uppercase font-bold text-techTeal tracking-wider">Booking Ticket Detail</span>
-                        <h3 className="font-outfit text-xl font-bold text-white mt-1">
-                          {selectedBooking.name}
-                        </h3>
-                      </div>
-                      <button 
-                        onClick={() => setSelectedBooking(null)}
-                        className="p-1.5 border border-white/10 text-slate-400 hover:text-white bg-white/5 rounded-lg transition-colors"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Booking Fields */}
-                    <div className="space-y-4">
-                      {/* Status Badge Select */}
-                      <div className="bg-white/[0.02] border border-white/5 p-4 rounded-xl space-y-2">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider pl-0.5">Booking Status</label>
-                        <div className="flex gap-2">
-                          {['Pending', 'In Progress', 'Completed'].map(st => {
-                            let activeStyle = "border-white/10 text-slate-400 bg-white/5";
-                            if (selectedBooking.status === st) {
-                              if (st === 'Pending') activeStyle = "border-yellow-400/30 text-yellow-400 bg-yellow-400/10 shadow-yellow-400/5";
-                              else if (st === 'In Progress') activeStyle = "border-techTeal/30 text-techTeal bg-techTeal/10 shadow-techTeal/5";
-                              else if (st === 'Completed') activeStyle = "border-neonGreen/30 text-neonGreen bg-neonGreen/10 shadow-neonGreen/5";
-                            }
-                            return (
-                              <button
-                                key={st}
-                                onClick={() => {
-                                  updateBookingStatus(selectedBooking._id, st);
-                                  setSelectedBooking(prev => ({ ...prev, status: st }));
-                                }}
-                                className={`flex-1 py-2 px-3 border rounded-lg text-xs font-bold transition-all ${activeStyle}`}
-                              >
-                                {st}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Service & Date */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white/5 border border-white/5 p-3.5 rounded-xl">
-                          <span className="block text-[9px] font-bold text-slate-500 uppercase">Service Requested</span>
-                          <span className="text-white font-bold block mt-1">{selectedBooking.service}</span>
-                        </div>
-                        <div className="bg-white/5 border border-white/5 p-3.5 rounded-xl">
-                          <span className="block text-[9px] font-bold text-slate-500 uppercase">Created Date</span>
-                          <span className="text-white font-bold block mt-1">{selectedBooking.date || (selectedBooking.createdAt ? new Date(selectedBooking.createdAt).toLocaleDateString() : 'N/A')}</span>
-                        </div>
-                      </div>
-
-                      {/* Contact Information */}
-                      <div className="bg-white/5 border border-white/5 p-4 rounded-xl space-y-3">
-                        <h4 className="font-bold text-white text-xs border-b border-white/5 pb-1.5 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-techTeal" /> Contact Details</h4>
-                        
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-500 uppercase">Phone</span>
-                            <a href={`tel:${selectedBooking.phone.replace(/\s+/g, '')}`} className="text-white font-semibold block mt-0.5 hover:text-techTeal hover:underline transition-colors">
-                              {selectedBooking.phone}
-                            </a>
-                          </div>
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-500 uppercase">Email</span>
-                            <a href={`mailto:${selectedBooking.email}`} className="text-white font-semibold block mt-0.5 hover:text-techTeal hover:underline transition-colors break-all">
-                              {selectedBooking.email}
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Issue Description */}
-                      <div className="bg-white/5 border border-white/5 p-4 rounded-xl space-y-2">
-                        <span className="block text-[9px] font-bold text-slate-500 uppercase">Issue Description</span>
-                        <p className="text-slate-300 leading-relaxed bg-black/25 p-3 rounded-lg border border-white/5 max-h-48 overflow-y-auto whitespace-pre-wrap">
-                          {selectedBooking.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Drawer Footer Actions */}
-                  <div className="pt-4 border-t border-white/5 mt-6 space-y-2.5">
-                    <h4 className="font-bold text-slate-300 text-[10px] uppercase tracking-wider pl-1">Quick Client Engagement</h4>
-                    <div className="grid grid-cols-2 gap-3">
-                      {/* WhatsApp message trigger */}
-                      <a 
-                        href={`https://wa.me/${selectedBooking.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                          `Hi ${selectedBooking.name}, this is PrasaTek System Solutions regarding your scheduled booking for "${selectedBooking.service}". We would like to confirm your ticket details...`
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="py-2.5 rounded-lg font-bold text-darkBg bg-[#25D366] hover:bg-[#128C7E] transition-all text-center flex items-center justify-center gap-1.5"
-                      >
-                        <Send className="w-3.5 h-3.5" /> WhatsApp Web
-                      </a>
-                      {/* Email message trigger */}
-                      <a 
-                        href={`mailto:${selectedBooking.email}?subject=${encodeURIComponent(
-                          `PrasaTek System Solutions - Booking for ${selectedBooking.service}`
-                        )}&body=${encodeURIComponent(
-                          `Dear ${selectedBooking.name},\n\nThis is PrasaTek System Solutions following up on your requested booking for ${selectedBooking.service}.\n\n(Ticket status: ${selectedBooking.status})\n\nDescription: ${selectedBooking.description}\n\nSincerely,\nPrasaTek Support`
-                        )}`}
-                        className="py-2.5 rounded-lg border border-techTeal text-techTeal hover:bg-techTeal hover:text-darkBg transition-all text-center flex items-center justify-center gap-1.5"
-                      >
-                        <Mail className="w-3.5 h-3.5" /> Send Email
-                      </a>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        if (window.confirm("Delete this booking permanently?")) {
-                          deleteBooking(selectedBooking._id);
-                          setSelectedBooking(null);
-                        }
-                      }}
-                      className="w-full py-2.5 border border-red-500/20 bg-red-950/20 text-red-400 hover:bg-red-950/40 rounded-lg font-bold transition-colors"
-                    >
-                      Wipe Booking Ticket
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Message Details Modal */}
             {selectedMessage && (
@@ -2994,10 +2927,6 @@ function App() {
                 About Us
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-techTeal group-hover:w-full transition-all duration-300"></span>
               </a>
-              <a href="/booking" onClick={(e) => { e.preventDefault(); navigateTo('/booking'); }} className="hover:text-techTeal transition-colors duration-200 relative py-1 group">
-                Book Service
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-techTeal group-hover:w-full transition-all duration-300"></span>
-              </a>
               <a href="/reviews" onClick={(e) => { e.preventDefault(); navigateTo('/reviews'); }} className="hover:text-techTeal transition-colors duration-200 relative py-1 group">
                 Reviews
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-techTeal group-hover:w-full transition-all duration-300"></span>
@@ -3014,8 +2943,8 @@ function App() {
                 <PhoneCall className="w-4 h-4 text-techTeal animate-bounce-subtle" />
                 {settings.phone}
               </a>
-              <a href="/booking" onClick={(e) => { e.preventDefault(); navigateTo('/booking'); }} className="relative group overflow-hidden px-5 py-2.5 rounded-lg text-sm font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen hover:shadow-glowTeal transition-all duration-300">
-                <span className="relative z-10">Get Started</span>
+              <a href="/contact" onClick={(e) => { e.preventDefault(); navigateTo('/contact'); }} className="relative group overflow-hidden px-5 py-2.5 rounded-lg text-sm font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen hover:shadow-glowTeal transition-all duration-300">
+                <span className="relative z-10">Contact Us</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-neonGreen to-techTeal opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               </a>
             </div>
@@ -3040,7 +2969,6 @@ function App() {
               )}
               <a href="/#web-products" className="block px-3 py-3 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5" onClick={(e) => { e.preventDefault(); navigateTo('/'); setMobileMenuOpen(false); setTimeout(() => { document.getElementById('web-products')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }}>Web Products</a>
               <a href="/about" className="block px-3 py-3 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5" onClick={(e) => { e.preventDefault(); navigateTo('/about'); setMobileMenuOpen(false); }}>About Us</a>
-              <a href="/booking" className="block px-3 py-3 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5" onClick={(e) => { e.preventDefault(); navigateTo('/booking'); setMobileMenuOpen(false); }}>Book Service</a>
               <a href="/reviews" className="block px-3 py-3 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5" onClick={(e) => { e.preventDefault(); navigateTo('/reviews'); setMobileMenuOpen(false); }}>Reviews</a>
               <a href="/contact" className="block px-3 py-3 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/5" onClick={(e) => { e.preventDefault(); navigateTo('/contact'); setMobileMenuOpen(false); }}>Contact</a>
               
@@ -3049,8 +2977,8 @@ function App() {
                   <PhoneCall className="w-5 h-5 text-techTeal" />
                   {settings.phone}
                 </a>
-                <a href="/booking" onClick={(e) => { e.preventDefault(); navigateTo('/booking'); setMobileMenuOpen(false); }} className="w-full max-w-xs py-3 rounded-lg text-base font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen">
-                  Get Started
+                <a href="/contact" onClick={(e) => { e.preventDefault(); navigateTo('/contact'); setMobileMenuOpen(false); }} className="w-full max-w-xs py-3 rounded-lg text-base font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen">
+                  Contact Us
                 </a>
               </div>
             </div>
@@ -3103,8 +3031,8 @@ function App() {
                 </p>
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                  <a href="/booking" onClick={(e) => { e.preventDefault(); navigateTo('/booking'); }} className="w-full sm:w-auto text-center px-8 py-4 rounded-xl text-base font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen hover:scale-105 hover:shadow-glowTealStrong transition-all duration-300">
-                    Book a Service Now
+                  <a href="/contact" onClick={(e) => { e.preventDefault(); navigateTo('/contact'); }} className="w-full sm:w-auto text-center px-8 py-4 rounded-xl text-base font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen hover:scale-105 hover:shadow-glowTealStrong transition-all duration-300">
+                    Contact Us Now
                   </a>
                   <a href="/services" onClick={(e) => { e.preventDefault(); navigateTo('/services'); }} className="w-full sm:w-auto text-center px-8 py-4 rounded-xl text-base font-bold text-white border border-white/10 bg-white/5 hover:bg-white/10 hover:border-techTeal/30 transition-all duration-300">
                     Explore Services
@@ -3287,18 +3215,26 @@ function App() {
                         )}
                       </div>
                       
-                      <div className="pt-6 mt-auto">
                         <button 
-                          onClick={() => selectBookingService(s.title)} 
+                          onClick={() => {
+                            setContactForm(prev => ({
+                              ...prev,
+                              subject: `Inquiry regarding: ${s.title}`,
+                              message: `Hi PrasaTek, I would like to inquire about your ${s.title} service...`
+                            }));
+                            addToast(`Inquiry details loaded. Please complete contact form below.`, "info");
+                            setTimeout(() => {
+                              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                            }, 100);
+                          }} 
                           className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
                             s.tealTheme 
                               ? 'bg-techTeal hover:bg-techTealHover text-darkBg' 
                               : 'bg-neonGreen hover:bg-neonGreenHover text-darkBg'
                           }`}
                         >
-                          Book Support
+                          Inquire Service
                         </button>
-                      </div>
                     </div>
                   );
                 })}
@@ -3448,13 +3384,15 @@ function App() {
                         
                         <button 
                           onClick={() => {
-                            setBookingForm(prev => ({ 
+                            setContactForm(prev => ({ 
                               ...prev, 
-                              service: "Hardware & Custom Enquiries", 
-                              description: `Hi PrasaTek, I would like to inquire about purchasing the product: "${p.name}" (Price: Rs. ${p.price.toLocaleString()}). Please contact me to arrange pick-up/installation.` 
+                              subject: `Hardware Inquiry: ${p.name}`, 
+                              message: `Hi PrasaTek, I am interested in purchasing the product: "${p.name}" (Price: LKR ${p.price.toLocaleString()}). Please contact me with availability...` 
                             }));
-                            navigateTo('/booking');
-                            addToast(`Inquiry loaded. Complete details below.`, "info");
+                            addToast(`Inquiry details loaded. Complete contact form below.`, "info");
+                            setTimeout(() => {
+                              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                            }, 100);
                           }}
                           className="w-full py-2.5 rounded-xl text-xs font-bold bg-white/5 hover:bg-techTeal hover:text-darkBg border border-white/10 hover:border-techTeal text-slate-200 transition-all duration-300"
                         >
@@ -3534,137 +3472,6 @@ function App() {
           </div>
         </section>
 
-        {/* ==========================================
-            CLIENT BOOKING ENGINE
-            ========================================== */}
-        <section id="booking" className="py-20 md:py-28 relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-              
-              <div className="lg:col-span-5 space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neonGreen/10 border border-neonGreen/30 text-neonGreen text-xs font-semibold tracking-wider uppercase">
-                  BOOK A SERVICE
-                </div>
-                <h2 className="font-outfit text-3xl sm:text-4xl font-extrabold text-white">
-                  Ready to Resolve Your Tech Issues?
-                </h2>
-                <p className="text-slate-400 text-sm sm:text-base font-sans">
-                  Select your desired service, provide the details of your request, and submit your ticket. Our team will review your request immediately and get in touch.
-                </p>
-                
-                <div className="space-y-4 pt-4">
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-techTeal/10 flex items-center justify-center text-techTeal flex-shrink-0">
-                      <span className="font-bold text-sm">1</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white">Submit Details</h4>
-                      <p className="text-xs text-slate-400 font-sans">Fill in your requirements and chosen service type.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-techTeal/10 flex items-center justify-center text-techTeal flex-shrink-0">
-                      <span className="font-bold text-sm">2</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white">Instant Confirmation</h4>
-                      <p className="text-xs text-slate-400 font-sans">Receive a status booking receipt stored in our system.</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-techTeal/10 flex items-center justify-center text-techTeal flex-shrink-0">
-                      <span className="font-bold text-sm">3</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white">Fast Resolution</h4>
-                      <p className="text-xs text-slate-400 font-sans">Our expert technician gets to work fixing your device.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Form Card */}
-              <div className="lg:col-span-7 bg-darkCard border border-white/5 rounded-2xl p-6 sm:p-8 hover:border-white/10 transition-all duration-300 shadow-glowTeal/5 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-techTeal via-neonGreen to-techTeal"></div>
-                
-                <form onSubmit={handleBookingSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">Full Name</label>
-                      <input 
-                        type="text" 
-                        required 
-                        placeholder="John Doe" 
-                        value={bookingForm.name}
-                        onChange={(e) => setBookingForm(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-techTeal transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">Phone Number</label>
-                      <input 
-                        type="tel" 
-                        required 
-                        placeholder="0719323239" 
-                        value={bookingForm.phone}
-                        onChange={(e) => setBookingForm(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-techTeal transition-colors"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">Email Address</label>
-                      <input 
-                        type="email" 
-                        required 
-                        placeholder="john@example.com" 
-                        value={bookingForm.email}
-                        onChange={(e) => setBookingForm(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-techTeal transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">Select Service</label>
-                      <select 
-                        required 
-                        value={bookingForm.service}
-                        onChange={(e) => setBookingForm(prev => ({ ...prev, service: e.target.value }))}
-                        className="w-full bg-[#0d1222] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-techTeal transition-colors"
-                      >
-                        <option value="" disabled>Choose a service</option>
-                        {services.map(s => (
-                          <option key={s._id} value={s.title}>{s.title}</option>
-                        ))}
-                        <option value="Hardware & Custom Enquiries">Hardware & Custom Enquiries</option>
-                      </select>
-                    </div>
-                  </div>
-
-
-
-                  <div className="space-y-2">
-                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">Describe the Issue / Requirements</label>
-                    <textarea 
-                      rows="4" 
-                      placeholder="Briefly describe what needs attention..." 
-                      required
-                      value={bookingForm.description}
-                      onChange={(e) => setBookingForm(prev => ({ ...prev, description: e.target.value }))}
-                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-techTeal transition-colors resize-none"
-                    ></textarea>
-                  </div>
-
-                  <button type="submit" className="w-full py-4 rounded-xl text-base font-bold text-darkBg bg-gradient-to-r from-techTeal to-neonGreen hover:shadow-glowTeal hover:scale-[1.01] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2">
-                    <Send className="w-5 h-5" /> Submit Booking Request
-                  </button>
-                </form>
-              </div>
-
-            </div>
-          </div>
-        </section>
 
         {/* ==========================================
             CUSTOMER TESTIMONIALS & REVIEWS SECTION
@@ -4059,7 +3866,6 @@ function App() {
               )}
               <a href="/#web-products" onClick={(e) => { e.preventDefault(); navigateTo('/'); setTimeout(() => { document.getElementById('web-products')?.scrollIntoView({ behavior: 'smooth' }); }, 100); }} className="hover:text-techTeal transition-colors">Web Products</a>
               <a href="/about" onClick={(e) => { e.preventDefault(); navigateTo('/about'); }} className="hover:text-techTeal transition-colors">About Us</a>
-              <a href="/booking" onClick={(e) => { e.preventDefault(); navigateTo('/booking'); }} className="hover:text-techTeal transition-colors">Book Service</a>
               <a href="/reviews" onClick={(e) => { e.preventDefault(); navigateTo('/reviews'); }} className="hover:text-techTeal transition-colors">Reviews</a>
               <a href="/contact" onClick={(e) => { e.preventDefault(); navigateTo('/contact'); }} className="hover:text-techTeal transition-colors">Contact</a>
             </div>
