@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #050811;
+}
+::-webkit-scrollbar-thumb {
+  background: #111a36;
+  border-radius: 4px;
+  border: 2px solid #050811;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00d2ff;
+}
+
+/* Glassmorphism Panel styles */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Keyframes & Animations */
+@keyframes pulse-slow {
+  0%, 100% {
+      opacity: 0.8;
+      transform: scale(1);
+  }
+  50% {
+      opacity: 1;
+      transform: scale(1.05);
+  }
+}
+
+@keyframes pulse-slower {
+  0%, 100% {
+      opacity: 0.5;
+      transform: scale(1);
+  }
+  50% {
+      opacity: 0.7;
+      transform: scale(1.08);
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+      transform: translateY(0);
+  }
+  50% {
+      transform: translateY(-4px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+      opacity: 0;
+      transform: translateY(10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse-slow {
+  from {
+      transform: rotate(360deg);
+  }
+  to {
+      transform: rotate(0deg);
+  }
+}
+
+@keyframes toast-slide-in {
+  from {
+      transform: translateX(100%) translateY(20px);
+      opacity: 0;
+  }
+  to {
+      transform: translateX(0) translateY(0);
+      opacity: 1;
+  }
+}
+
+/* Animation Classes */
+.animate-pulse-slow {
+  animation: pulse-slow 8s infinite ease-in-out;
+}
+
+.animate-pulse-slower {
+  animation: pulse-slower 12s infinite ease-in-out;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s infinite ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s forwards ease-out;
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s infinite linear;
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 15s infinite linear;
+}
+
+.animate-toast {
+  animation: toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Card Hover Glow Borders */
+.service-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 10px 30px -10px rgba(0, 210, 255, 0.2), 0 0 20px rgba(0, 210, 255, 0.1);
+}
+
+.service-card-green:hover {
+  border-color: rgba(57, 255, 20, 0.4);
+  box-shadow: 0 10px 30px -10px rgba(57, 255, 20, 0.2), 0 0 20px rgba(57, 255, 20, 0.1);
+}
+
+/* Star Rating Animation */
+#star-rating-selector button.active {
+  color: #facc15; /* yellow-400 */
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
+}
+
+/* Input Fields Accent Hover states */
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
+}
+
+/* Reviews slider adjustments */
+#reviews-slider {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Form input date customizations for dark mode */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.9);
+  cursor: pointer;
+}
+
+/* Admin Dashboard Table Row hover states */
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
