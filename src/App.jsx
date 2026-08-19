@@ -61,6 +61,13 @@ const renderServiceIcon = (iconName, className) => {
   return <IconComponent className={className} />;
 };
 
+const API_BASE_URL = (import.meta.env.VITE_API_BACKEND_URL || '').replace(/\/$/, '');
+
+const apiFetch = (url, options) => {
+  const fullUrl = (typeof url === 'string' && url.startsWith('/api') && API_BASE_URL) ? `${API_BASE_URL}${url}` : url;
+  return fetch(fullUrl, options);
+};
+
 function App() {
   // ==========================================
   // STATE MANAGEMENT
@@ -160,7 +167,7 @@ function App() {
     
     // Handle initial routing scroll
     const initialPath = window.location.pathname;
-    if (initialPath && initialPath !== '/' && initialPath !== '/adminpage') {
+    if (initialPath && initialPath !== '/' && initialPath !== '/adminpage' && initialPath !== '/admin' && initialPath !== '/admin/') {
       setTimeout(() => {
         const id = initialPath.replace('/', '');
         const el = document.getElementById(id);
@@ -174,10 +181,10 @@ function App() {
   const fetchServicesAndProducts = async () => {
     try {
       const [seRes, svRes, pRes, wpRes] = await Promise.all([
-        fetch('/api/settings'),
-        fetch('/api/services'),
-        fetch('/api/products'),
-        fetch('/api/web-projects')
+        apiFetch('/api/settings'),
+        apiFetch('/api/services'),
+        apiFetch('/api/products'),
+        apiFetch('/api/web-projects')
       ]);
       
       if (seRes.ok) {
@@ -211,22 +218,24 @@ function App() {
     }
   };
 
+  const isAdminPath = (p) => p === '/adminpage' || p === '/admin' || p === '/adminpage/' || p === '/admin/' || p.startsWith('/adminpage') || p.startsWith('/admin');
+
   useEffect(() => {
-    if (adminAuthorized && currentPath === '/adminpage') {
+    if (adminAuthorized && isAdminPath(currentPath)) {
       fetchAdminData();
     }
   }, [adminAuthorized, currentPath]);
 
   // If path changed to adminpage directly and they are authorized, fetch data
   useEffect(() => {
-    if (currentPath === '/adminpage' && adminAuthorized) {
+    if (isAdminPath(currentPath) && adminAuthorized) {
       fetchAdminData();
     }
   }, [currentPath]);
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch('/api/reviews');
+      const res = await apiFetch('/api/reviews');
       if (res.ok) {
         const data = await res.json();
         setReviews(Array.isArray(data) ? data : []);
@@ -239,12 +248,12 @@ function App() {
   const fetchAdminData = async () => {
     try {
       const [bRes, mRes, rRes, sRes, pRes, wpRes] = await Promise.all([
-        fetch('/api/bookings'),
-        fetch('/api/messages'),
-        fetch('/api/reviews'),
-        fetch('/api/services'),
-        fetch('/api/products'),
-        fetch('/api/web-projects')
+        apiFetch('/api/bookings'),
+        apiFetch('/api/messages'),
+        apiFetch('/api/reviews'),
+        apiFetch('/api/services'),
+        apiFetch('/api/products'),
+        apiFetch('/api/web-projects')
       ]);
       
       if (bRes.ok) { const bData = await bRes.json(); setBookings(Array.isArray(bData) ? bData : []); }
@@ -280,7 +289,7 @@ function App() {
     
     if (path === '/') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (path !== '/adminpage') {
+    } else if (!isAdminPath(path)) {
       const id = path.replace('/', '');
       const el = document.getElementById(id);
       if (el) {
@@ -300,7 +309,7 @@ function App() {
     }
     
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await apiFetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingForm)
@@ -321,7 +330,7 @@ function App() {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/reviews', {
+      const res = await apiFetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reviewForm)
@@ -343,7 +352,7 @@ function App() {
   const handleContactSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/messages', {
+      const res = await apiFetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contactForm)
@@ -385,7 +394,7 @@ function App() {
     const cleanPassword = adminPassword.trim();
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await apiFetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: cleanUsername, password: cleanPassword })
@@ -427,7 +436,7 @@ function App() {
   const handleSaveSettings = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/settings', {
+      const res = await apiFetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settingsForm)
@@ -449,7 +458,7 @@ function App() {
   const handleAddService = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/services', {
+      const res = await apiFetch('/api/services', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newServiceForm)
@@ -473,7 +482,7 @@ function App() {
   const handleDeleteService = async (id) => {
     if (!window.confirm("Delete this service? This will remove it from the home page catalog.")) return;
     try {
-      const res = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/services/${id}`, { method: 'DELETE' });
       if (res.ok) {
         addToast("Service deleted", "info");
         fetchAdminData();
@@ -488,7 +497,7 @@ function App() {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/products', {
+      const res = await apiFetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProductForm)
@@ -510,7 +519,7 @@ function App() {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Delete this product from your inventory shop?")) return;
     try {
-      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/products/${id}`, { method: 'DELETE' });
       if (res.ok) {
         addToast("Product deleted", "info");
         fetchAdminData();
@@ -542,7 +551,7 @@ function App() {
         images: newWebProjectForm.images.filter(img => img && img.trim() !== '').slice(0, 3)
       };
 
-      const res = await fetch('/api/web-projects', {
+      const res = await apiFetch('/api/web-projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cleanedForm)
@@ -566,7 +575,7 @@ function App() {
   const handleDeleteWebProject = async (id) => {
     if (!window.confirm("Are you sure you want to delete this web project?")) return;
     try {
-      const res = await fetch(`/api/web-projects/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/web-projects/${id}`, { method: 'DELETE' });
       if (res.ok) {
         addToast("Web Project deleted", "info");
         fetchAdminData();
@@ -589,7 +598,7 @@ function App() {
         images: (editingWebProject.images || []).filter(img => img && img.trim() !== '').slice(0, 3)
       };
 
-      const res = await fetch(`/api/web-projects/${editingWebProject._id}`, {
+      const res = await apiFetch(`/api/web-projects/${editingWebProject._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cleanedEdit)
@@ -662,7 +671,7 @@ function App() {
 
   const updateBookingStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(`/api/bookings/${id}`, {
+      const res = await apiFetch(`/api/bookings/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -680,7 +689,7 @@ function App() {
   const deleteBooking = async (id) => {
     if (!window.confirm("Are you sure you want to delete this booking?")) return;
     try {
-      const res = await fetch(`/api/bookings/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/bookings/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error("Delete failed");
       
       addToast("Booking deleted", "info");
@@ -695,7 +704,7 @@ function App() {
     e.preventDefault();
     if (!editingService) return;
     try {
-      const res = await fetch(`/api/services/${editingService._id}`, {
+      const res = await apiFetch(`/api/services/${editingService._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingService)
@@ -718,7 +727,7 @@ function App() {
     e.preventDefault();
     if (!editingProduct) return;
     try {
-      const res = await fetch(`/api/products/${editingProduct._id}`, {
+      const res = await apiFetch(`/api/products/${editingProduct._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingProduct)
@@ -740,7 +749,7 @@ function App() {
   const toggleMessageReadStatus = async (id, currentStatus) => {
     try {
       const newStatus = currentStatus === 'read' ? 'unread' : 'read';
-      const res = await fetch(`/api/messages/${id}`, {
+      const res = await apiFetch(`/api/messages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -765,7 +774,7 @@ function App() {
       return;
     }
     try {
-      const res = await fetch('/api/admin/credentials', {
+      const res = await apiFetch('/api/admin/credentials', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: newAdminUsername, password: newAdminPassword })
@@ -787,7 +796,7 @@ function App() {
   const clearAllBookings = async () => {
     if (!window.confirm("Caution! This will delete ALL booking records. Proceed?")) return;
     try {
-      const res = await fetch('/api/bookings', { method: 'DELETE' });
+      const res = await apiFetch('/api/bookings', { method: 'DELETE' });
       if (!res.ok) throw new Error("Wipe failed");
       
       addToast("All bookings cleared successfully", "info");
@@ -801,7 +810,7 @@ function App() {
   const deleteMessage = async (id) => {
     if (!window.confirm("Delete this message?")) return;
     try {
-      const res = await fetch(`/api/messages/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/messages/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error("Delete failed");
       
       addToast("Message deleted", "info");
@@ -815,7 +824,7 @@ function App() {
   const clearAllMessages = async () => {
     if (!window.confirm("Are you sure you want to delete ALL messages in your inbox?")) return;
     try {
-      const res = await fetch('/api/messages', { method: 'DELETE' });
+      const res = await apiFetch('/api/messages', { method: 'DELETE' });
       if (!res.ok) throw new Error("Wipe failed");
       
       addToast("Inbox messages cleared", "info");
@@ -829,7 +838,7 @@ function App() {
   const deleteReview = async (id) => {
     if (!window.confirm("Are you sure you want to delete this review?")) return;
     try {
-      const res = await fetch(`/api/reviews/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/reviews/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error("Delete failed");
       
       addToast("Review deleted", "info");
@@ -845,7 +854,7 @@ function App() {
   const clearAllReviews = async () => {
     if (!window.confirm("Caution! This deletes ALL live customer reviews. Proceed?")) return;
     try {
-      const res = await fetch('/api/reviews', { method: 'DELETE' });
+      const res = await apiFetch('/api/reviews', { method: 'DELETE' });
       if (!res.ok) throw new Error("Wipe failed");
       
       addToast("All reviews cleared", "info");
@@ -861,7 +870,7 @@ function App() {
   const seedDefaultReviews = async () => {
     if (!window.confirm("Reset reviews to original default mock values?")) return;
     try {
-      await fetch('/api/reviews', { method: 'DELETE' });
+      await apiFetch('/api/reviews', { method: 'DELETE' });
       
       const defaults = [
         {
@@ -882,7 +891,7 @@ function App() {
       ];
 
       for (const rev of defaults) {
-        await fetch('/api/reviews', {
+        await apiFetch('/api/reviews', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(rev)
@@ -1010,7 +1019,7 @@ function App() {
   // ==========================================
   // 1. ADMIN PORTAL COMPONENT RENDERING
   // ==========================================
-  if (currentPath === '/adminpage' || currentPath === '/adminpage/' || currentPath.startsWith('/adminpage')) {
+  if (isAdminPath(currentPath)) {
     return (
       <div className="bg-darkBg text-slate-100 font-sans min-h-screen selection:bg-techTeal selection:text-darkBg overflow-x-hidden relative flex flex-col justify-between">
         {/* Ambient Grid Background & Glow Effects */}
